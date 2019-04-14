@@ -8,19 +8,23 @@ const app = express()
 const server = http.createServer(app);
 const io = socketio(server);
 const { generateMessage, generateLocationMessage } = require('./utils/message');
-const { addUser, removeUser, getUser, getUsersRoom } = require('./utils/users');
+const { addUser, removeUser, getUser, getUsersRoom, addRoom, getRooms, removeRoom} = require('./utils/users');
 const port = process.env.PORT || 3000
 const publicDirectoryPath = path.join(__dirname, '../public')
 const filter = new Filter();
 
 io.on('connection', (socket) => {
     console.log('New socket connection');
-
+    //Emit the rooms to the new connected user:
+    io.emit('rooms', getRooms());
+    //Listen to join event 
     socket.on('join', ({username, room}, callback) => {
         const {error, user} = addUser({ id: socket.id, username, room});
         if(error) {
           return callback(error);
         }
+        //Add the room to the Rooms list
+        addRoom(user.room);
 
         socket.join(user.room)
         
@@ -54,12 +58,15 @@ io.on('connection', (socket) => {
         
         if(user){
             io.to(user.room).emit('message', generateMessage(`${user.username} has left!`));
-        }   
+            removeRoom(user.room);
+
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersRoom(user.room)
+            })
+        }  
+       
         
-        io.to(user.room).emit('roomData', {
-            room: user.room,
-            users: getUsersRoom(user.room)
-        })
     })
 
     socket.on('sendLocation', (coords, callback) => {

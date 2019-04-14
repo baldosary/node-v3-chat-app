@@ -13,10 +13,32 @@
                     <label>Display name</label>
                     <input type="text" name="username" placeholder="Display name" required>
                     <label>Room</label>
-                    <input type="text" name="room" placeholder="Room" required>
+                    <input  id="room-text" type="text" name="room" placeholder="Room" required>
+                    <select id="room-select" name="rooms" onclick="myFunction()">
+                      </select>
                     <button>Join</button>
                  </form>
             </div>
         </div>
+        <script id="room-template" type="text/html">
+            {{#.}}
+            <option value="{{val}}">{{roomName}}</option>
+            {{/.}}
+        </script>
+        <script>
+            function myFunction() {
+                var $roomSelect = document.getElementById("room-select");
+                var selectedText = $roomSelect.options[$roomSelect.selectedIndex].text;
+                document.getElementById("room-text").value = selectedText;
+            }
+        </script>
+        <!-- <script id="room-template" type="text/html">
+            <div>
+                <p>{{room}}</p>
+            </div>
+        </script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/index.js"></script>
     </body>
 </html>

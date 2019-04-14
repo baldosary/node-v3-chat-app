@@ -1,4 +1,5 @@
 const Users = [];
+const Rooms = [];
 
 //Add User:
 
@@ -51,10 +52,51 @@ const getUser = (id) => {
 const getUsersRoom = (room) => {
     return Users.filter((user) => user.room === room);
 }
-    
+
+const getAllUsers = () => {
+    return Users;
+}
+
+//add room..
+const addRoom = (roomName) => {
+  const val = Rooms.length;
+  const existRoom = Rooms.find((room) => {
+      return room.roomName === roomName;
+  })
+  if(!existRoom) {
+    const room = {val, roomName};
+      Rooms.push(room);
+  }
+}
+//get rooms..
+const getRooms = () => {
+    return Rooms;
+}
+const removeRoom = (roomName) => {
+    const usersInRoom = getUsersRoom();
+        const roomLength = usersInRoom.length;
+        if(roomLength === 0){
+           
+            /*Delete the room:
+             /1. Find the room
+             /2. Delete the room
+             */
+             const index = Rooms.findIndex((room) => room.roomName === roomName);
+
+            //Remove the user by its index:
+            if(index !== -1){
+             return Rooms.splice(index, 1);
+            }
+        }
+  
+}
 module.exports = {
     addUser,
     removeUser,
     getUser,
-    getUsersRoom
+    getUsersRoom,
+    getAllUsers,
+    addRoom,
+    getRooms,
+    removeRoom
 }
